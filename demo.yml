@@ -1,0 +1,151 @@
+#
+# QUICKNET ACI CLASS
+# DEMO TENANT NETWORK PROFILE
+# CREA APP PROFILE INICIALL
+#
+
+---
+- name: PLAYBOOK 2 - Crea App Profile -> App 2 Capas 
+  hosts: apic
+  connection: network_cli
+  gather_facts: no
+  vars:
+    aci_host: 198.18.133.200
+    aci_user: admin
+    aci_password: C1sco12345
+    ansible_connection: local
+    tenant_aci: olmar
+    tenant_vrf: vrf_olmar
+    ap_name: AP_APP01_SAP_PBS_2_TIERS
+    bd_cliente: bd_olmar_01
+    ace_name: SAP01
+    filtro: Filtro-Web
+    contract_name: CONTRATO_WEB02
+    epg_web: WEB01
+    epg_db: DB
+    
+   
+  tasks:
+
+    - name: Crea Application Profile
+      aci_ap:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        tenant: "{{ tenant_aci }}"
+        ap: "{{ ap_name }}"
+        state: present
+        validate_certs: no
+      delegate_to: localhost
+
+    - name: Creando Filter
+      aci_filter:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        filter: "{{ filtro }}"
+        tenant: "{{ tenant_aci }}"
+        state: present
+        validate_certs: no
+      delegate_to: localhost
+
+    - name: Crea ACE
+      aci_filter_entry:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        state: present
+        entry: "{{ ace_name }}"
+        tenant: "{{ tenant_aci }}"
+        ether_type: ip
+        ip_protocol: tcp
+        dst_port: 80
+        filter: "{{ filtro }}"
+        validate_certs: no
+      delegate_to: localhost
+
+    - name: Creando Contrato
+      aci_contract:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        tenant: "{{ tenant_aci }}"
+        contract: "{{contract_name }}"
+        scope: application-profile
+        state: present
+        validate_certs: no
+      delegate_to: localhost
+
+    - name: Asociando Subject al Contrato
+      aci_contract_subject:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        tenant: "{{ tenant_aci }}"
+        contract: "{{ contract_name }}"
+        subject: default
+        reverse_filter: yes
+        priority: level1
+        dscp: unspecified
+        state: present
+        validate_certs: no
+      register: query_result
+
+    - name: Creando EPG WEB
+      aci_epg:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        tenant: "{{ tenant_aci }}"
+        ap: "{{ ap_name }}"
+        epg: "{{ epg_web }}"
+        bd: "{{ bd_cliente }}"
+        preferred_group: yes
+        state: present
+        validate_certs: no
+      delegate_to: localhost
+
+    - name: Creando EPG DB
+      aci_epg:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        tenant: "{{ tenant_aci }}"
+        ap: "{{ ap_name }}"
+        epg: "{{ epg_db }}"
+        bd: "{{ bd_cliente }}"
+        preferred_group: yes
+        state: present
+        validate_certs: no
+      delegate_to: localhost
+
+    - name: Asociando Contrato a EPG WEB
+      aci_epg_to_contract:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        tenant: "{{ tenant_aci }}"
+        ap: "{{ ap_name }}"
+        epg: "{{ epg_web }}"
+        contract: "{{ contract_name }}"
+        contract_type: consumer
+        state: present
+        validate_certs: no
+      delegate_to: localhost
+
+    - name: Asociando Contrato a EPG DB
+      aci_epg_to_contract:
+        host: "{{ aci_host }}"
+        username: "{{aci_user}}"
+        password: "{{ aci_password }}"
+        tenant: "{{ tenant_aci }}"
+        ap: "{{ ap_name }}"
+        epg: "{{ epg_db }}"
+        contract: "{{ contract_name }}"
+        contract_type: provider
+        state: present
+        validate_certs: no
+      delegate_to: localhost
+
+
+
