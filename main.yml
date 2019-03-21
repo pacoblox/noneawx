@@ -1,0 +1,66 @@
+--- 
+# Demo Lab Collab Rollback
+# NterOne Corporate Address
+# 1900 Campus Commons Drive, Suite 100
+# Reston, VA 20191
+# 703-972-2288
+# NterOne.com
+# Pablo Córdoba - QUICKNET
+# v0.1
+# Notes
+# pip install PyVmomi
+# export ANSIBLE_HOST_KEY_CHECKING=False
+
+- name: Playbook Rollback Collaboration POD
+  hosts: collabpod1
+  gather_facts: No
+  connection: local
+  vars_files:
+
+  vars:
+    vcenter_hostname: 172.29.186.100
+    vcenter_username: administrator@vsphere.local
+    vcenter_password: Password1.
+    datacenter_name: DC-LAB
+    guest_name: "{{ inventory_hostname }}"
+  tasks: 
+
+    - name: Wait for the virtual machine to shutdown
+      vmware_guest_powerstate:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ guest_name }}"
+        state: powered-off
+        # state_change_timeout: 20
+        force: yes
+        validate_certs: No
+      delegate_to: localhost
+      register: deploy
+
+    - name: Gather snapshot facts about the virtual machine in the given vCenter
+      vmware_guest_snapshot_facts:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: /"{{ datacenter_name }}"/vm/
+        name: "{{ inventory_hostname }}"
+        validate_certs: No
+      delegate_to: localhost
+      register: snapshot
+    - debug: var=snapshot["guest_snapshots"]["snapshots"][-1]["name"]
+
+
+    - name: Revert to the Latest snapshot
+      vmware_guest_snapshot:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: /"{{ datacenter_name }}"/vm/
+        name: "{{ guest_name }}"
+        state: revert
+        snapshot_name: "{{ snapshot['guest_snapshots']['snapshots'][-1]['name']}}"
+        validate_certs: No
+      delegate_to: localhost
