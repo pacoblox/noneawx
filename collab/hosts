@@ -1,0 +1,27 @@
+[collabpod1]
+PC ansible_ssh_host=127.0.0.1
+# Voice-POD01-DC ansible_ssh_host=127.0.0.1
+# Voice-POD01-CUCMPub_v10 ansible_ssh_host=127.0.0.1
+# Voice-POD01-CUCMSub_v10 ansible_ssh_host=127.0.0.1
+# Voice-POD01-GNS3Int ansible_ssh_host=127.0.0.1
+# Voice-POD01-GNS3USA ansible_ssh_host=127.0.0.1
+# Voice-POD01-UCPub_v10 ansible_ssh_host=127.0.0.1
+# Voice-POD01-UCSub_v10 ansible_ssh_host=127.0.0.1
+# Voice-POD01-CUPSPub_v10 ansible_ssh_host=127.0.0.1
+# Voice-POD01-CUCMInt ansible_ssh_host=127.0.0.1
+# Voice-POD01-HQPhone1 ansible_ssh_host=127.0.0.1
+# Voice-POD01-HQPhone2 ansible_ssh_host=127.0.0.1
+# Voice-POD01-IntPhone1 ansible_ssh_host=127.0.0.1
+# Voice-POD01-IntPhone2 ansible_ssh_host=127.0.0.1
+# Voice-POD01-USAPhone1 ansible_ssh_host=127.0.0.1
+# Voice-POD01-USAPhone2 ansible_ssh_host=127.0.0.1
+# Voice-POD01-HqPSTN ansible_ssh_host=127.0.0.1
+# Voice-POD01-IntPSTN ansible_ssh_host=127.0.0.1
+# Voice-POD01-TPC ansible_ssh_host=127.0.0.1
+# Voice-POD01-TPS ansible_ssh_host=127.0.0.1
+# Voice-POD01-Exchange ansible_ssh_host=127.0.0.1
+# Voice-POD01-VCSCInt ansible_ssh_host=127.0.0.1
+# Voice-POD01-VCSXC ansible_ssh_host=127.0.0.1
+# Voice-POD01-VCSXE ansible_ssh_host=127.0.0.1
+# Voice-POD01-Desktop ansible_ssh_host=127.0.0.1
+# Voice-POD01-CPCP ansible_ssh_host=127.0.0.1
