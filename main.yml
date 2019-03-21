@@ -12,7 +12,7 @@
 # export ANSIBLE_HOST_KEY_CHECKING=False
 
 - name: Playbook Rollback Collaboration POD
-  hosts: collabpod1
+  hosts: PC
   gather_facts: No
   connection: local
   vars_files:
