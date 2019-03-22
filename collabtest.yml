@@ -1,0 +1,53 @@
+- name: Playbook Rollback Collaboration POD
+  hosts: PC
+  gather_facts: No
+  connection: local
+  vars_files:
+
+  vars:
+    vcenter_hostname: 172.29.186.100
+    vcenter_username: pablo.cordoba@nterone.com
+    vcenter_password: N242Live!
+    datacenter_name: VoicePods
+    guest_name: "{{ inventory_hostname }}"
+  tasks: 
+
+    - name: Wait for the virtual machine to shutdown
+      vmware_guest_powerstate:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ guest_name }}"
+        state: powered-off
+        # state_change_timeout: 20
+        force: yes
+        validate_certs: No
+      delegate_to: localhost
+      register: deploy
+
+    - name: Gather snapshot facts about the virtual machine in the given vCenter
+      vmware_guest_snapshot_facts:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: /"{{ datacenter_name }}"/vm/
+        name: "{{ inventory_hostname }}"
+        validate_certs: No
+      delegate_to: localhost
+      register: snapshot
+    - debug: var=snapshot["guest_snapshots"]["snapshots"][-1]["name"]
+
+
+    - name: Revert to the Latest snapshot
+      vmware_guest_snapshot:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: /"{{ datacenter_name }}"/vm/
+        name: "{{ guest_name }}"
+        state: revert
+        snapshot_name: "{{ snapshot['guest_snapshots']['snapshots'][-1]['name']}}"
+        validate_certs: No
+      delegate_to: localhost
