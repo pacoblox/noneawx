@@ -51,3 +51,19 @@
         snapshot_name: "{{ snapshot['guest_snapshots']['snapshots'][-1]['name']}}"
         validate_certs: No
       delegate_to: localhost
+      
+    - name: Power On VMs
+      vmware_guest_powerstate:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ guest_name }}"
+        state: powered-on
+        # state_change_timeout: 20
+        force: yes
+        validate_certs: No
+      delegate_to: localhost
+      register: deploy
+      
+      
+ 
