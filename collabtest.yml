@@ -1,5 +1,5 @@
 - name: Playbook Rollback Collaboration POD
-  hosts: collabpod13
+  hosts: grp_collabpod13
   gather_facts: No
   connection: local
   vars_files:
