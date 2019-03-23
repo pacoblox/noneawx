@@ -5,7 +5,7 @@
   vars_files:
 
   vars:
-    vcenter_hostname: 172.29.186.100
+    vcenter_hostname: 10.0.93.11
     vcenter_username: pablo.cordoba@nterone.com
     vcenter_password: N242Live!
     datacenter_name: VoicePods
